@@ -1,0 +1,29 @@
+---
+- hosts: aws_ec2
+  become: yes
+  vars:
+    source_file: ./curl_script.sh
+    destin_file: /home/ec2-user
+  tasks:
+    - name: Copy curl_script.sh to Server
+      copy: src={{ source_file }} dest={{ destin_file }} mode=0644
+    - name: Export variables and Create new docker container
+      shell: |
+        source /home/ec2-user/.bashrc
+        docker pull vitaly10kanivets/devops_project_web:"{{ VERSION }}"
+        docker run --name "{{ CONTAINER_NAME }}" --rm -d -p "{{ PORT }}":80 --env-file env.list -e \ 
+          MY_IP=$MY_IP vitaly10kanivets/devops_project_web:"{{ VERSION }}"
+    - name: TEST CURL
+      shell: |
+        export PORT="{{ PORT }}"
+        sh /home/ec2-user/curl_script.sh
+      register: results_curl
+      ignore_errors: false
+    - debug:
+        var: results_curl.stdout
+    - name: Create iptables rules
+      shell: |
+        iptables -t nat -R PREROUTING 1 -p tcp --dport 80 -j REDIRECT --to-ports "{{ PORT }}"
+        iptables -t nat -R OUTPUT 1 -p tcp -o lo --dport 80 -j REDIRECT --to-ports "{{ PORT }}"
+    - name: Delete old docker container
+      shell: docker stop $(docker ps -aq |  tail -n +2)

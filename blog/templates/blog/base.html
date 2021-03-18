@@ -1,0 +1,52 @@
+{% load static %}
+<html>
+  <head>
+    <title>DevOps  | {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  </head>
+
+  <body style="background: #f2f2f2;">
+    <div style="float: left; position: absolute">{% block myip %}{% endblock %}</div>
+    <div class="d-flex flex-column flex-md-row align-items-center mb-4 bg-dark border-bottom shadow-sm navbar-fixed-top  container" >
+      <h2 class="my-0 mr-md-auto font-weight-normal">
+        <a href="/" class="p-2 text-white" style="text-decoration: none; ">Devops project</a>
+      </h2>
+      <ul class="nav nav-pills flex-column flex-sm-row align-items-center">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            {% if request.get_full_path == "/" %}
+              <a href="/" class="nav-link active">Home</a>
+            {% else %}
+                <a href="/" class="nav-link" >Home</a>            
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            {% if request.get_full_path == "/post/new" %}
+              <a href="{% url 'post_new' %}" class="nav-link active">Create post</a>
+            {% else %}
+              <a href="{% url 'post_new' %}" class="nav-link" >Create post</a>
+            {% endif %}
+          </li>
+        {% endif %}
+      </ul>
+      <nav class="navbar">
+          <div style="background-color: #f2f2f2"  class="navbar">
+            {% if user.is_authenticated %}
+            <h6>
+              Signed in as <b>{{ request.user }}</b> |
+              <a href="/admin/logout?next=/" class=" text-dark">Sing out</a>
+            </h6>
+            {% else %}
+            <h6>
+              <a href="/admin/login/?next=/" class="text-dark">Sing in</a>
+            </h6>
+            {% endif %}
+          </div>
+        </nav>
+    </div>
+    <div class="content container">
+      {% block content %} 
+      {% endblock %}
+    </div>
+  </body>
+</html>

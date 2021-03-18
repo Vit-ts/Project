@@ -1,0 +1,34 @@
+{% extends 'blog/base.html' %}
+{% block title %}main{% endblock %}
+{% block myip %}<h5 class="alert-warning">Public address {{ MY_IP }}</h5>{% endblock %}
+{% block content %}
+    {% if  posts %}
+        {% for post in posts %}
+           
+            <div  class="alert  shadow-sm" style="background: #ffffff; display: table; width: 100%;">
+                <div style="float: left; width: 17%; display: inline-block;">
+                    <img src="{{ post.image.url }}" alt="image" class="img-thumbnail" width="auto">        
+                </div>
+                 <div style="float: right; width: 83%;display: inline-block;"> 
+                    <div class="ml-4">
+                    <h5><a style="text-decoration: none;" href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h5>
+                    <b>{{ post.published_date }} Created by {{ post.author }}</b>
+                    <hr>
+                    <p class="small">{{ post.text|linebreaksbr }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+            <div  class="alert alert-warning shadow-sm" >
+                {% if user.is_authenticated %}
+                    <h5>There is no any post!</h5>
+                {% else %}
+                    <h5>There is no any post!</h5>
+                    <hr>
+                    <p>Log in and add post.</p>
+                {% endif %}
+            </div>
+    {% endif %}
+    
+{% endblock %}

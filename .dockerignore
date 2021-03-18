@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+
+# Django stuff
+.git
+.gitignore
+ansible.cfg
+aws_profile
+aws_ec2.yaml
+update_docker.yaml
+README.md
+docker-compose.yaml
